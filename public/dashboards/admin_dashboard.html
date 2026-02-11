@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR University Admin Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            font-family: 'Inter', sans-serif;
+        }
+        .content-section {
+            display: none;
+        }
+        .active-link {
+            border-left-color: #4F46E5 !important; /* Tailwind indigo-600 */
+            color: white !important;
+            background-color: #1F2937; /* Tailwind gray-800 */
+        }
+        /* Style for the custom message box */
+        #message-box {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <!-- 1. Sidebar Navigation -->
+    <div id="sidebar" class="w-64 bg-gray-900 text-white flex-shrink-0 transition-transform duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed md:relative z-30 h-full">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-indigo-400">Admin</h1>
+        </div>
+        <nav class="mt-6 space-y-1">
+            <a href="#" id="link-dashboard" data-target="dashboard-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent active-link">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 001 1h3M14 8v4M7 8v8h4V8H7z"></path></svg>
+                Dashboard
+            </a>
+            <a href="#" id="link-profiles" data-target="profiles-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0h4m-4 0h.01"></path></svg>
+                Employee Profiles 
+            </a>
+            <!-- NEW FEATURE 9: Employee Creation/Update -->
+            <a href="#" id="link-management" data-target="management-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                Employee Management 
+            </a>
+            <a href="#" id="link-metrics" data-target="metrics-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                Department Metrics 
+            </a>
+            <!-- UPDATED FEATURE: Leave Approval Queue -->
+            <a href="#" id="link-approval" data-target="approval-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Leave Approvals 
+            </a>
+            <a href="#" id="link-leaves" data-target="leaves-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Rejected Leaves 
+            </a>
+            <a href="#" id="link-deductions" data-target="deductions-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.398 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Deductions Removal 
+            </a>
+            <a href="#" id="link-attendance" data-target="attendance-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 4h.01M3 21h18m-9-4a4 4 0 100-8 4 4 0 000 8zM3 10h18"></path></svg>
+                Daily Attendance 
+            </a>
+            <a href="#" id="link-holidays" data-target="holidays-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Official Holidays 
+            </a>
+             <a href="#" id="link-seed" class="nav-link flex items-center px-6 py-3 text-indigo-400 font-bold hover:bg-gray-800 transition duration-200 border-l-4 border-transparent hover:border-indigo-500" onclick="initializeDemoData()">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                SEED DATA
+            </a>
+        </nav>
+    </div>
+
+    <!-- 2. Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- 2.1. Header / Top Bar -->
+        <header class="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-md flex-shrink-0">
+            <button id="menu-button" class="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <h2 id="content-title" class="text-xl font-semibold text-gray-800 hidden sm:block">HR Dashboard Overview</h2>
+            
+            <div class="flex items-center space-x-4">
+                <div id="auth-status" class="text-sm text-green-600 font-medium">Authenticating...</div>
+                <img src="https://placehold.co/40x40/4F46E5/FFFFFF?text=AD" alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500 cursor-pointer">
+            </div>
+        </header>
+
+        <!-- 2.2. Main Content Wrapper -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6">
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- 2.2.1. DASHBOARD CONTENT (Default View) -->
+                <div id="dashboard-content" class="content-section">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20h-5V8a3 3 0 015.356-1.857M17 20v-2m2 2l-2 2m-2 0h2m-4-2H5a3 3 0 01-3-3V7a3 3 0 013-3h12a3 3 0 013 3v3m-2-5h-4m4 0a1 1 0 00-1-1H9a1 1 0 00-1 1m6 4a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Total Employees</p><p id="metric-total-employees" class="text-2xl font-bold text-gray-900">--</p></div></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-green-100 text-green-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.257V12a1 1 0 00-1-1H4a1 1 0 00-1 1v1.257l.08.08A2 2 0 004 15.114V17a1 1 0 001 1h14a1 1 0 001-1v-1.886a2 2 0 00.92-.777l.08-.08zM10 4h4a1 1 0 011 1v3h-6V5a1 1 0 011-1z"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Departments Active</p><p id="metric-active-departments" class="text-2xl font-bold text-gray-900">--</p></div></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 4h.01M3 21h18m-9-4a4 4 0 100-8 4 4 0 000 8zM3 10h18"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Today's Absentees</p><p id="metric-absentees" class="text-2xl font-bold text-gray-900">--</p></div></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-red-100 text-red-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Resigned Employees</p><p id="metric-resigned" class="text-2xl font-bold text-gray-900">--</p></div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2.2.2. EMPLOYEE PROFILES (Feature 2) -->
+                <div id="profiles-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Employee Profiles </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">View details for all employee profiles.</p>
+                        <button id="btn-load-profiles" onclick="fetchAllEmployees()" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" >Load All Profiles</button>
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type of Contract</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Years of Experience</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deductions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employee-profiles-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="5" class="p-4 text-center text-gray-500">Click 'Load All Profiles' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                  <div class="bg-white p-6 rounded-xl shadow-lg mt-6">
+            <h4 class="text-xl font-semibold text-gray-800 mb-3">Winter Semester Performance Analysis ❄️</h4>
+            <p class="text-gray-600 mb-4">Retrieve aggregated performance metrics for all employees across all available Winter semesters (e.g., Q1/Q4 yearly reviews).</p>
+            <button id="btn-load-winter-performance" onclick="fetchWinterSemesterPerformance()" class="mt-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-150 ease-in-out shadow-md hover:shadow-lg">
+                Fetch Winter Performance Details
+            </button>
+            
+            <!-- Output Area for Performance Data -->
+            <div id="winter-performance-output" class="mt-6 hidden">
+                <h5 id="performance-date-title" class="text-lg font-medium mb-2 text-gray-700"></h5>
+                <div class="overflow-x-auto border rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Semester Count</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. Score</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Latest Year</th>
+                            </tr>
+                        </thead>
+                        <!-- Target tbody for data insertion -->
+                        <tbody id="winter-performance-body" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+                <!-- 2.2.3. EMPLOYEE MANAGEMENT (NEW FEATURE 9: C/U/D) -->
+                <div id="management-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Employee Management </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h4 class="text-xl font-semibold mb-3 text-indigo-600">Add or Update Employee Record</h4>
+                        <p class="text-sm text-gray-500 mb-4">Enter Employee ID to update existing record, or leave blank/enter new ID to create a new one.</p>
+                        <form id="employee-form" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input id="mgmt-emp-id" type="text" placeholder="Employee ID (Auto if blank)" class="px-4 py-2 border rounded-lg" >
+                                <input id="mgmt-first-name" type="text" placeholder="First Name" class="px-4 py-2 border rounded-lg" required>
+                                <input id="mgmt-last-name" type="text" placeholder="Last Name" class="px-4 py-2 border rounded-lg" required>
+                                <input id="mgmt-email" type="email" placeholder="Email" class="px-4 py-2 border rounded-lg" required>
+                                <select id="mgmt-department" class="px-4 py-2 border rounded-lg" required>
+                                    <option value="" disabled selected>Select Department</option>
+                                    <option value="MET">MET</option>
+                                    <option value="BI">BI</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Medical">Medical</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <select id="mgmt-status" class="px-4 py-2 border rounded-lg" required>
+                                    <option value="Full Time">Full Time</option>
+                                    <option value="Part Time">Part Time</option>
+                                    <option value="Intern">Resigned</option>
+                                </select>
+                                <input id="mgmt-deductions" type="number" step="0.01" placeholder="Current Deductions ($0.00)" class="px-4 py-2 border rounded-lg" value="0.00" required>
+                                <input id="mgmt-password" type="password" placeholder="Temporary Password (Hashed on Save)" class="px-4 py-2 border rounded-lg" required>
+                            </div>
+                            <button type="submit" id="btn-save-employee" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 w-full" disabled>Save Employee Record</button>
+                        </form>
+                    </div>
+                </div>
+
+
+                <!-- 2.2.4. DEPARTMENT METRICS  -->
+                <div id="metrics-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Department Metrics </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Fetch and display the number of employees per department.</p>
+                        <button id="btn-load-metrics" onclick="fetchEmployeesPerDepartment()" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 " >Generate Department Report</button>
+                        <div id="dept-report" class="mt-4 text-gray-700"></div>
+
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="department-metrics-body" class="bg-white divide-y divide-gray-200">
+                                     <tr><td colspan="2" class="p-4 text-center text-gray-500">Click 'Generate Department Report' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2.2.5. LEAVE APPROVALS  -->
+                <div id="approval-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Pending Leave Approvals (HR Duty)</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Review all pending leave requests for final HR approval.</p>
+                        <button id="btn-load-pending-leaves" onclick="fetchPendingLeaves()" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400" disabled>Load Pending Requests</button>
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Req ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pending-leaves-body" class="bg-white divide-y divide-gray-200">
+                                     <tr><td colspan="5" class="p-4 text-center text-gray-500">Click 'Load Pending Requests' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2.2.6. REJECTED LEAVES  -->
+                <div id="leaves-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Rejected Medical Leaves </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Review all rejected medical leave applications.</p>
+                        <button id="btn-load-rejected-leaves" onclick="fetchRejectedMedicalLeaves()" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" >View Rejected Medical Leaves</button>
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number of Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rejected-leaves-body" class="bg-white divide-y divide-gray-200">
+                                     <tr><td colspan="4" class="p-4 text-center text-gray-500">Click 'View Rejected Medical Leaves' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2.2.7. RESIGNED DEDUCTIONS  -->
+                <div id="deductions-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Deductions for Resigned Employees </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+    <p class="text-lg text-gray-600 mb-4">
+        Tool to remove outstanding deductions (set to $0) for employees based on their employment status.
+    </p>
+
+    <!-- Dropdown to select employment status -->
+    <label for="status-select" class="block text-sm font-medium text-gray-700">Select Employment Status:</label>
+    <select id="status-select" class="mt-1 block w-60 rounded-md border-gray-300 shadow-sm">
+        <option value="Resigned">Resigned</option>
+        <option value="Active">Active</option>
+        <option value="On Leave">On Leave</option>
+    </select>
+
+    <!-- Button -->
+    <button id="btn-remove-deductions" class="mt-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700">
+        Process Deduction Removal
+    </button>
+
+    <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-sm text-red-700 font-medium">
+            Warning: This action will permanently set the 'deductions' field to 0 for all employees with the selected status.
+        </p>
+    </div>
+</div>
+
+                </div>
+
+                <!-- 2.2.8. DAILY ATTENDANCE  -->
+                <div id="attendance-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4"> Attendance Management </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg space-y-6">
+    
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Attendance Management Actions</h3>
+    
+    <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key Elements</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Initiate Daily Records</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Create new records for the current day.</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Defaults status to 'Absent'.</td>
+            </tr>
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Update Individual</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Manually correct or update an employee's status.</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Employee ID, Status (Present/Absent/Late).</td>
+            </tr>
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Fetch Yesterday's Records</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Retrieve a full list of attendance from the previous day.</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">No input needed.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <hr class="my-6">
+    
+    <div>
+        <h4 class="text-xl font-semibold mb-2">Initiate Daily Records</h4>
+        <p class="text-gray-600 mb-4">Initiate attendance records for the current day for all active employees (status defaults to 'Absent').</p>
+        <button id="btn-initiate-attendance" onclick="initiateDailyAttendance()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">Initiate Today's Attendance Records</button>
+    </div>
+
+    <div class="border-t pt-4">
+        <h4 class="text-xl font-semibold mb-2">Update Individual Attendance</h4>
+        <p class="text-gray-600 mb-4">Manually update the attendance status for a specific employee today.</p>
+        <div class="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
+            <input id="update-emp-id" type="text" placeholder="Employee ID (e.g., 101)" class="px-4 py-2 border rounded-lg flex-1" required="">
+            <select id="update-status" class="px-4 py-2 border rounded-lg">
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+                <option value="Late">Late</option>
+            </select>
+            <button id="btn-update-attendance" onclick="handleAttendanceUpdate()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400">Update Record</button>
+            <p id="update-attendance-msg" class="text-sm text-green-600 mt-2 hidden"></p>
+        </div>
+    </div>
+
+    <div class="border-t pt-4">
+        <h4 class="text-xl font-semibold mb-2">Fetch Yesterday's Attendance Records 📅</h4>
+        <p class="text-gray-600 mb-4">Retrieve the complete attendance list and statuses for all employees from the previous day.</p>
+        <button id="btn-fetch-yesterday" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"> Get Yesterday's Records </button>
+
+        
+        <div id="yesterday-records-container" class="mt-4 hidden">
+            <h5 id="yesterday-date-title" class="text-lg font-medium mb-2"></h5>
+            
+            <!-- Table showing yesterday's attendance -->
+            <div class="overflow-x-auto border rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Time In</th>
+                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Time Out</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yesterday-output-body" class="bg-white divide-y divide-gray-200">
+                        <!-- JS will populate rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+                </div>
+
+                <!-- 2.2.9. OFFICIAL HOLIDAYS  -->
+                <div id="holidays-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Official Holidays Calendar </h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h4 class="text-xl font-semibold mb-3">Add New Official Holiday</h4>
+                        <div class="space-y-4">
+                            <input id="holiday-name" type="text" placeholder="Holiday Name (e.g., University Founder's Day)" class="w-full px-4 py-2 border rounded-lg" required>
+                            <input id="holiday-date" type="date" class="w-full px-4 py-2 border rounded-lg" required>
+                            <button id="btn-add-holiday" onclick="handleAddHoliday()" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 " >Add Holiday</button>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <p class="font-semibold text-gray-700 mb-2">Upcoming Holidays:</p>
+                            <ul id="holidays-list" class="list-disc list-inside space-y-1">
+                                <li class="text-sm text-gray-500">No holidays added yet.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Message Box for Notifications -->
+    <div id="message-box" class="space-y-2"></div>
+
+<script>
+   
+// ===== HOLIDAYS FIXED VERSION =====
+
+// Make fetchHolidays GLOBAL
+async function fetchHolidays() {
+    try {
+        const res = await fetch('/admin/get-holidays');
+        if (!res.ok) throw new Error('Failed to fetch holidays');
+
+        const holidays = await res.json();
+        const list = document.getElementById('holidays-list');
+
+        list.innerHTML = "";
+
+        if (holidays.length === 0) {
+            list.innerHTML = '<li class="text-sm text-gray-500">No holidays added yet.</li>';
+        } else {
+            holidays.forEach(h => {
+                const li = document.createElement('li');
+                li.textContent =
+                    `${h.holiday_name} - ${new Date(h.holiday_date).toLocaleDateString()}`;
+                list.appendChild(li);
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error loading holidays list.");
+    }
+}
+
+// GLOBAL so button can call it
+window.fetchHolidays = fetchHolidays;
+
+
+async function handleAddHoliday() {
+    const name = document.getElementById("holiday-name").value.trim();
+    const date = document.getElementById("holiday-date").value.trim();
+
+    if (!name || !date) {
+        alert("Missing required fields.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/holidays/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, date })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || "Server error while adding holiday.");
+            return;
+        }
+
+        alert("Holiday added successfully!");
+
+        document.getElementById("holiday-name").value = "";
+        document.getElementById("holiday-date").value = "";
+    } catch (error) {
+        alert("Server error while adding holiday.");
+    }
+}
+
+window.handleAddHoliday = handleAddHoliday;
+
+// Load holidays automatically when page opens
+document.addEventListener("DOMContentLoaded", fetchHolidays);
+async function fetchWinterSemesterPerformance() {
+    try {
+        const res = await fetch('http://localhost:5000/performance/winter');
+        const data = await res.json();
+
+        const tbody = document.getElementById('winter-performance-body');
+        tbody.innerHTML = ''; // clear previous data
+
+        if (data.records.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-4 py-2 text-center text-sm text-gray-500">
+                        No winter semester performance data found.
+                    </td>
+                </tr>
+            `;
+        } else {
+            data.records.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">${record.emp_ID}</td>
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">${record.name}</td>
+            <td class="px-4 py-2 text-center whitespace-nowrap text-sm text-gray-500">${record.semester_count}</td>
+            <td class="px-4 py-2 text-center whitespace-nowrap text-sm text-gray-500">${parseFloat(record.avg_score).toFixed(2)}</td>
+            <td class="px-4 py-2 text-center whitespace-nowrap text-sm text-gray-500">${record.latest_performance_id}</td>
+        `;
+        tbody.appendChild(row);
+});
+
+        }
+
+        document.getElementById('winter-performance-output').classList.remove('hidden');
+
+    } catch (err) {
+        console.error(err);
+        alert('Failed to fetch winter semester performance');
+    }
+}
+
+// Optional: attach event listener instead of inline onclick
+document.getElementById('btn-load-winter-performance')
+        .addEventListener('click', fetchWinterSemesterPerformance);
+
+// Global function for initiating daily attendance
+async function initiateDailyAttendance() {
+    try {
+        const res = await fetch('/admin/initiate-attendance', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.error || 'Failed to initiate attendance.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Network or server error.');
+    }
+}
+
+window.initiateDailyAttendance = initiateDailyAttendance;
+
+// Global function for updating individual attendance
+async function handleAttendanceUpdate() {
+    const empId = document.getElementById('update-emp-id').value.trim();
+    const status = document.getElementById('update-status').value;
+
+    if (!empId) {
+        alert('Please enter an Employee ID.');
+        return;
+    }
+
+    try {
+        const res = await fetch('/admin/update-attendance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ employee_id: empId, status })
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert(result.message);
+            document.getElementById('update-emp-id').value = '';
+        } else {
+            alert(result.error || 'Failed to update attendance.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Network or server error.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const updateBtn = document.getElementById('btn-update-attendance');
+    if (updateBtn) updateBtn.disabled = false;
+
+    window.handleAttendanceUpdate = async () => {
+        const empID = document.getElementById('update-emp-id').value.trim();
+        let status = document.getElementById('update-status').value;
+
+        // Map dropdown to allowed DB values
+        if (status === 'Present' || status === 'Late') status = 'Attended';
+        if (status === 'Absent') status = 'Absent';
+
+        if (!empID) {
+            alert('Please enter Employee ID.');
+            return;
+        }
+
+        try {
+            const res = await fetch('/admin/update-attendance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emp_ID: parseInt(empID), status })
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                alert(result.message);
+                document.getElementById('update-emp-id').value = '';
+            } else {
+                alert(result.error || 'Failed to update attendance.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network or server error.');
+        }
+    };
+});
+
+
+
+
+
+
+
+// Global function for fetching pending leaves
+async function fetchPendingLeaves() {
+    try {
+        const response = await fetch('/admin/pending-leaves');
+        if (!response.ok) throw new Error('Failed to fetch pending leaves');
+
+        const leaves = await response.json();
+        const tableBody = document.getElementById('pending-leaves-body');
+        tableBody.innerHTML = '';
+
+        if (leaves.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="p-4 text-center text-gray-500">No pending leave requests found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        leaves.forEach(leave => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${leave.request_ID}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${leave.Emp_ID}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${leave.leave_type || 'N/A'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${leave.start_date?.split('T')[0] ?? '-'} to ${leave.end_date?.split('T')[0] ?? '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <button class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 mr-2">Approve</button>
+                    <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Reject</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (err) {
+        console.error(err);
+        alert('Error fetching pending leaves!');
+    }
+}
+
+// Make sure window-level functions are available
+window.fetchPendingLeaves = fetchPendingLeaves;
+window.initiateDailyAttendance = initiateDailyAttendance;
+window.handleAttendanceUpdate = handleAttendanceUpdate;
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const menuButton = document.getElementById('menu-button');
+    const contentSections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const loadBtn = document.getElementById('btn-load-profiles');
+    const tableBody = document.getElementById('employee-table-body');
+    const rejectedBtn = document.getElementById('btn-load-rejected-leaves');
+    if (rejectedBtn) rejectedBtn.disabled = false;
+    // Enable the Load All Profiles button
+    if (loadBtn) loadBtn.disabled = false;
+
+    // --- NAVIGATION LOGIC ---
+    function showContent(targetId) {
+        contentSections.forEach(s => s.style.display = 'none');
+        const target = document.getElementById(targetId);
+        if (target) target.style.display = 'block';
+    }
+    function activateLink(link) {
+        navLinks.forEach(l => l.classList.remove('active-link'));
+        link.classList.add('active-link');
+    }
+    showContent('dashboard-content');
+    const dashboardLink = document.querySelector('.nav-link[data-target="dashboard-content"]');
+    if (dashboardLink) activateLink(dashboardLink);
+    navLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const targetId = link.getAttribute('data-target');
+            if (targetId) {
+                showContent(targetId);
+                activateLink(link);
+            }
+            if (window.innerWidth < 768) sidebar.classList.toggle('-translate-x-full');
+        });
+    });
+    menuButton.addEventListener('click', e => { e.stopPropagation(); sidebar.classList.toggle('-translate-x-full'); });
+    document.addEventListener('click', e => {
+        if (window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+            if (!sidebar.contains(e.target) && e.target !== menuButton) sidebar.classList.toggle('-translate-x-full');
+        }
+        const saveButton = document.getElementById('btn-save-employee');
+        saveButton.disabled = false;
+    });
+
+    // --- FETCH METRICS ---
+    async function fetchDashboardMetrics() {
+        try {
+            const res = await fetch('/api/metrics');
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            const data = await res.json();
+            document.getElementById('metric-total-employees').textContent = data.totalEmployees ?? 'N/A';
+            document.getElementById('metric-active-departments').textContent = data.activeDepartments ?? 'N/A';
+            document.getElementById('metric-absentees').textContent = data.todayAbsentees ?? 'N/A';
+            document.getElementById('metric-resigned').textContent = data.resignedEmployees ?? 'N/A';
+        } catch (err) {
+            console.error('Error fetching metrics:', err);
+            ['metric-total-employees','metric-active-departments','metric-absentees','metric-resigned']
+                .forEach(id => document.getElementById(id).textContent = 'N/A');
+        }
+    }
+    fetchDashboardMetrics();
+document.getElementById('employee-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const employeeData = {
+        employee_id: document.getElementById('mgmt-emp-id').value,
+        first_name: document.getElementById('mgmt-first-name').value,
+        last_name: document.getElementById('mgmt-last-name').value,
+        email: document.getElementById('mgmt-email').value,
+        department: document.getElementById('mgmt-department').value,
+        status: document.getElementById('mgmt-status').value,
+        deductions: document.getElementById('mgmt-deductions').value,
+        password: document.getElementById('mgmt-password').value
+    };
+
+    try {
+        const response = await fetch('/api/employee/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(employeeData)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(result.message);
+            document.getElementById('employee-form').reset(); // Clear form
+            // Optionally, refresh the employee table
+            fetchAllEmployees();
+        } else {
+            alert(result.error || 'Failed to save employee.');
+        }
+
+    } catch (err) {
+        console.error('Error submitting employee form:', err);
+        alert('Network or server error.');
+    }
+});
+async function fetchEmployeesPerDepartment() {
+    try {
+        const response = await fetch("/admin/employees-per-department");
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch department report");
+        }
+
+        const data = await response.json();
+
+        const tbody = document.getElementById("department-metrics-body");
+
+        // Clear old rows
+        tbody.innerHTML = "";
+
+        // If empty
+        if (data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="p-4 text-center text-gray-500">No departments found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Insert rows
+        data.forEach(dep => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${dep.dept_name}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${dep.count}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+    } catch (err) {
+        console.error(err);
+        alert("Error fetching department report!");
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const removeBtn = document.getElementById('btn-remove-deductions');
+
+    removeBtn.addEventListener('click', async () => {
+        const status = document.getElementById('status-select').value;
+
+        try {
+            const res = await fetch('/admin/remove-deductions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                alert(result.message);
+            } else {
+                alert(result.error || 'Failed to remove deductions.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network or server error.');
+        }
+    });
+});
+
+window.fetchEmployeesPerDepartment = fetchEmployeesPerDepartment;
+    // Frontend: dashboard.js
+async function fetchRejectedMedicalLeaves() {
+    try {
+        const res = await fetch("/admin/rejected-medical-leaves");
+        if (!res.ok) throw new Error("Failed to fetch rejected medical leaves");
+
+        const leaves = await res.json();
+        const tbody = document.getElementById("rejected-leaves-body");
+        tbody.innerHTML = "";
+
+        if (leaves.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No rejected medical leaves found.</td></tr>`;
+            return;
+        }
+
+        leaves.forEach(l => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${l.request_ID}</td>
+                <td>${l.Emp_ID}</td>
+                <td>${l.start_date?.split('T')[0] ?? '-'}</td>
+                <td>${l.reason ?? '-'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (err) {
+        console.error(err);
+        alert("Error fetching rejected medical leaves!");
+    }
+}
+window.fetchRejectedMedicalLeaves = fetchRejectedMedicalLeaves;
+
+
+async function fetchYesterdayAttendance() {
+    try {
+        const res = await fetch('/attendance/yesterday');
+        const data = await res.json();
+
+        // Update date title
+        document.getElementById('yesterday-date-title').innerText = `Attendance for ${data.date}`;
+
+        // Populate table
+        const tbody = document.getElementById('yesterday-output-body');
+        tbody.innerHTML = ''; // clear previous rows
+
+        data.records.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">${record.emp_ID}</td>
+                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">${record.name}</td>
+                <td class="px-4 py-2 text-center whitespace-nowrap text-sm text-gray-500">${record.status}</td>
+                <td class="px-4 py-2 text-center whitespace-nowrap text-sm text-gray-500">${record.check_in_time || '-'}</td>
+                <td class="px-4 py-2 text-center whitespace-nowrap text-sm text-gray-500">${record.check_out_time || '-'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('yesterday-records-container').classList.remove('hidden');
+
+    } catch (err) {
+        console.error(err);
+        alert('Failed to fetch yesterday attendance');
+    }
+}
+    document.getElementById('btn-fetch-yesterday')
+    .addEventListener('click', fetchYesterdayAttendance);
+
+    // --- FETCH EMPLOYEES ---
+    async function fetchAllEmployees() {
+    try {
+        const response = await fetch('/api/employees');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const employees = await response.json();
+
+        const tableBody = document.getElementById('employee-profiles-body');
+        tableBody.innerHTML = ''; // clear existing rows
+
+        employees.forEach(emp => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+        <td>${emp.employee_id}</td>
+        <td>${emp.first_name} ${emp.last_name}</td>
+        <td>${emp.email ?? '-'}</td>
+        <td>${emp.department ?? emp.dept_name ?? '-'}</td>
+        <td>${emp.employment_status ?? '-'}</td>
+        <td>${emp.type_of_contract ?? '-'}</td>
+        <td>${emp.salary ?? '-'}</td>
+        <td>${emp.years_of_experience ?? '-'}</td>
+        <td>${emp.deductions ?? '-'}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+    } catch (err) {
+        console.error('Error fetching employees:', err);
+    }
+}
+
+
+    if (loadBtn) loadBtn.addEventListener('click', fetchAllEmployees);
+});
+</script>
+
+</body>
+</html>

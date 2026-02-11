@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-2xl">
+        <h2 class="text-3xl font-bold text-center text-gray-900">University HR Login</h2>
+        <p class="text-center text-sm text-gray-600">Enter your credentials to access the system.</p>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="userId" class="block text-sm font-medium text-gray-700">ID</label>
+                <input type="text" id="userId" name="userId" required
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                        placeholder="Employee or Admin ID">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" required
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                        placeholder="password">
+            </div>
+
+            <div id="messageBox" class="hidden p-3 text-sm rounded-lg bg-red-100 text-red-700 border border-red-300 transition-opacity duration-300">
+                Invalid credentials. Please try again.
+            </div>
+
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 transform hover:scale-[1.01]">
+                    Login
+                </button>
+            </div>
+        </form>
+        </div>
+
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const idInput = document.getElementById('userId').value.trim();
+        const passwordInput = document.getElementById('password').value.trim();
+        const messageBox = document.getElementById('messageBox');
+
+        // Clear previous messages and hide box
+        messageBox.classList.add('hidden');
+        messageBox.textContent = "Invalid credentials. Please try again."; 
+
+        try {
+            // 🎯 Action: POST credentials to the single, unified /login route
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: idInput,
+                    password: passwordInput
+                })
+            });
+            const data = await response.json(); 
+            // If the server was successful and responded with a redirect
+            if (data.success) {
+            console.log("Redirecting to:", data.dashboard);
+            window.location.href = data.dashboard;
+            } else {
+                messageBox.textContent = data.message;
+                messageBox.classList.remove('hidden');
+            }
+            
+            
+        } catch (error) {
+            console.error("Login error:", error);
+            messageBox.textContent = "A network or server error occurred. Please try again.";
+            messageBox.classList.remove('hidden');
+        }
+    });
+    </script>
+
+
+</body>
+</html>

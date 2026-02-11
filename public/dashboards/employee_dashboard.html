@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR University Employee Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            font-family: 'Inter', sans-serif;
+        }
+        .content-section {
+            display: none;
+        }
+        .active-link {
+            border-left-color: #4F46E5 !important; /* Tailwind indigo-600 */
+            color: white !important;
+            background-color: #1F2937; /* Tailwind gray-800 */
+        }
+        /* Style for the custom message box */
+        #message-box {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <div id="sidebar" class="w-64 bg-gray-900 text-white flex-shrink-0 transition-transform duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed md:relative z-30 h-full">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-indigo-400">Employee</h1>
+        </div>
+        <nav class="mt-6 space-y-1">
+            <a href="#" id="link-dashboard" data-target="dashboard-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent active-link">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 001 1h3M14 8v4M7 8v8h4V8H7z"></path></svg>
+                Dashboard
+            </a>
+
+            <div class="pt-4 border-t border-gray-700">
+                <p class="px-6 py-2 text-xs uppercase font-semibold text-gray-400">P&A</p>
+                <a href="#" id="link-performance" data-target="performance-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Performance Review
+                </a>
+                <a href="#" id="link-attendance" data-target="attendance-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 4h.01M3 21h18m-9-4a4 4 0 100-8 4 4 0 000 8zM3 10h18"></path></svg>
+                    Monthly Attendance
+                </a>
+                <a href="#" id="link-deductions" data-target="deductions-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.398 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Attendance Deductions
+                </a>
+            </div>
+
+            <div class="pt-4 border-t border-gray-700">
+                 <p class="px-6 py-2 text-xs uppercase font-semibold text-gray-400">Payroll</p>
+                 <a href="#" id="link-payroll" data-target="payroll-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8a4 4 0 100 8 4 4 0 000-8zM7 21h10a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    Last Month's Payroll
+                </a>
+            </div>
+
+
+            <div class="pt-4 border-t border-gray-700">
+                <p class="px-6 py-2 text-xs uppercase font-semibold text-gray-400">Leaves</p>
+                <a href="#" id="link-apply-leave" data-target="apply-leave-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Apply for Leave
+                </a>
+                <a href="#" id="link-track-leave" data-target="track-leave-content" class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    Track My Leaves
+                </a>
+            </div>
+
+            <div class="pt-4 border-t border-gray-700">
+                <p class="px-6 py-2 text-xs uppercase font-semibold text-gray-400">Admin Tools</p>
+                <a href="#" id="link-admin-leave" data-target="admin-leave-content" class="nav-link flex items-center px-6 py-3 text-yellow-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Leave Approval Queue
+                </a>
+                <a href="#" id="link-evaluation" data-target="evaluation-content" class="nav-link flex items-center px-6 py-3 text-yellow-300 hover:bg-gray-800 hover:text-white transition duration-200 border-l-4 border-transparent hover:border-indigo-500">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2m-2 4h2m-2 4h2m10-4h2m-2-4h2m-2-4h2"></path></svg>
+                    Evaluate Employees
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+        <header class="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-md flex-shrink-0">
+            <button id="menu-button" class="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <h2 id="content-title" class="text-xl font-semibold text-gray-800 hidden sm:block">Employee Dashboard Overview</h2>
+
+            <div class="flex items-center space-x-4">
+                <div id="auth-status" class="text-sm text-green-600 font-medium">Logged in as: [Employee Name] ([ID])</div>
+                <img src="https://placehold.co/40x40/4F46E5/FFFFFF?text=JD" alt="Employee Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500 cursor-pointer">
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 md:p-6">
+            <div class="max-w-7xl mx-auto">
+
+                <div id="dashboard-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Welcome Back!</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8a4 4 0 100 8 4 4 0 000-8zM7 21h10a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Last Month Salary</p><p id="metric-last-salary" class="text-2xl font-bold text-gray-900">---</p></div></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-green-100 text-green-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Pending Leave Approvals</p><p id="metric-pending-leaves" class="text-2xl font-bold text-gray-900">---</p></div></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Last Performance Score</p><p id="metric-last-score" class="text-2xl font-bold text-gray-900">---</p></div></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                            <div class="flex items-center"><div class="p-3 rounded-full bg-red-100 text-red-600 mr-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.398 16c-.77 1.333.192 3 1.732 3z"></path></svg></div><div><p class="text-sm font-medium text-gray-500">Total Deductions</p><p id="metric-deductions" class="text-2xl font-bold text-gray-900">$0.00</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="performance-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Performance Review</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">View your performance evaluations for a selected semester.</p>
+                        <select id="semester-select" class="mt-1 block w-60 rounded-md border-gray-300 shadow-sm px-4 py-2">
+                            <option value="2024-Fall">2024 Fall</option>
+                            <option value="2024-Spring">2024 Spring</option>
+                            <option value="2023-Fall">2023 Fall</option>
+                        </select>
+                        <button id="btn-load-performance" onclick="fetchPerformanceReview()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Load Evaluation</button>
+
+                        <div id="performance-result" class="mt-6 border-t pt-4">
+                            <p class="text-gray-500">Evaluation details will load here upon selection.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="attendance-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Monthly Attendance Records</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Your attendance details for the current month.</p>
+                        <button id="btn-load-attendance" onclick="fetchMonthlyAttendance()" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">View This Month's Records</button>
+
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monthly-attendance-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="3" class="p-4 text-center text-gray-500">Click 'View This Month's Records' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="deductions-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Attendance Deductions</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Review deductions applied due to attendance issues.</p>
+                        <div class="flex items-center space-x-4">
+                            <input id="deduction-start-date" type="date" class="px-4 py-2 border rounded-lg" required>
+                            <input id="deduction-end-date" type="date" class="px-4 py-2 border rounded-lg" required>
+                            <button id="btn-load-deductions" onclick="fetchAttendanceDeductions()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Filter Deductions</button>
+                        </div>
+
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deductions-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="3" class="p-4 text-center text-gray-500">Select a date range and click 'Filter Deductions' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="payroll-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Last Month's Payroll Details</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Summary of your salary, bonuses, and deductions from last month.</p>
+                        <button id="btn-load-payroll" onclick="fetchLastMonthPayroll()" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">View Payroll</button>
+
+                        <div id="payroll-details" class="mt-6 border-t pt-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><p class="text-sm font-medium text-gray-500">Gross Salary:</p><p class="text-lg font-semibold text-gray-900" id="payroll-gross">---</p></div>
+                                <div><p class="text-sm font-medium text-gray-500">Total Bonuses:</p><p class="text-lg font-semibold text-green-600" id="payroll-bonus">---</p></div>
+                                <div><p class="text-sm font-medium text-gray-500">Total Deductions:</p><p class="text-lg font-semibold text-red-600" id="payroll-deductions">---</p></div>
+                                <div><p class="text-sm font-medium text-gray-500">Net Pay:</p><p class="text-2xl font-bold text-indigo-600" id="payroll-net">---</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="apply-leave-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Submit New Leave Request</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <form id="leave-application-form" class="space-y-4">
+                            <select id="leave-type" class="px-4 py-2 border rounded-lg w-full" required>
+                                <option value="" disabled selected>Select Leave Type</option>
+                                <option value="Annual">Annual Leave</option>
+                                <option value="Accidental">Accidental Leave</option>
+                                <option value="Medical">Medical Leave</option>
+                                <option value="Unpaid">Unpaid Leave</option>
+                                <option value="Compensation">Compensation Leave</option>
+                            </select>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input id="leave-start-date" type="date" class="px-4 py-2 border rounded-lg" required>
+                                <input id="leave-end-date" type="date" class="px-4 py-2 border rounded-lg" required>
+                            </div>
+                            <textarea id="leave-reason" rows="3" placeholder="Reason for leave" class="px-4 py-2 border rounded-lg w-full" required></textarea>
+                            <button type="submit" id="btn-submit-leave" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 w-full">Submit Application</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="track-leave-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Track Leave Status</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-gray-600 mb-4">Monitor the status of your Annual and Accidental leave requests for the current month.</p>
+                        <button id="btn-track-leaves" onclick="trackMyLeaves()" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Track Current Month's Leaves</button>
+
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Req ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tracked-leaves-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="4" class="p-4 text-center text-gray-500">Click 'Track Current Month's Leaves' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-leave-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-yellow-800 mb-4">Manager: Unpaid & Annual Leave Approval Queue</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-yellow-700 mb-4">Review and action Unpaid and Annual leave requests from your department.</p>
+                        <button id="btn-admin-load-leaves" onclick="fetchManagerLeaves()" class="mt-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Load Pending Requests</button>
+
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-yellow-100">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Req ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="manager-leaves-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="5" class="p-4 text-center text-gray-500">Click 'Load Pending Requests' to fetch data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="evaluation-content" class="content-section">
+                    <h3 class="text-2xl font-bold text-yellow-800 mb-4">Manager: Employee Evaluation</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-xl shadow-lg">
+                        <p class="text-lg text-yellow-700 mb-4">Structured performance assessment for employees in your department.</p>
+                        <form id="evaluation-form" class="space-y-4">
+                            <input id="eval-emp-id" type="text" placeholder="Employee ID to Evaluate (e.g., 102)" class="px-4 py-2 border rounded-lg w-full" required>
+                            <input id="eval-semester" type="text" placeholder="Semester (e.g., 2024-Fall)" class="px-4 py-2 border rounded-lg w-full" required>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input id="eval-score" type="number" step="1" min="0" max="100" placeholder="Score (0-100)" class="px-4 py-2 border rounded-lg" required>
+                                <select id="eval-status" class="px-4 py-2 border rounded-lg" required>
+                                    <option value="Excellent">Excellent</option>
+                                    <option value="Good">Good</option>
+                                    <option value="Satisfactory">Satisfactory</option>
+                                    <option value="Needs Improvement">Needs Improvement</option>
+                                </select>
+                            </div>
+                            <textarea id="eval-comments" rows="3" placeholder="Detailed comments for the employee" class="px-4 py-2 border rounded-lg w-full" required></textarea>
+                            <button type="submit" id="btn-submit-evaluation" class="px-6 py-3 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 w-full">Submit Evaluation</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="message-box" class="space-y-2"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('menu-button');
+        const contentSections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // --- NAVIGATION LOGIC ---
+        function showContent(targetId) {
+            contentSections.forEach(s => s.style.display = 'none');
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.style.display = 'block';
+                // Update header title based on content
+                const titleElement = document.getElementById('content-title');
+                if (titleElement) {
+                    const linkText = document.querySelector(`[data-target="${targetId}"]`).textContent.trim();
+                    titleElement.textContent = linkText;
+                }
+            }
+        }
+
+        function activateLink(link) {
+            navLinks.forEach(l => l.classList.remove('active-link'));
+            link.classList.add('active-link');
+        }
+
+        // Default view
+        showContent('dashboard-content');
+        const dashboardLink = document.querySelector('.nav-link[data-target="dashboard-content"]');
+        if (dashboardLink) activateLink(dashboardLink);
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+                if (targetId) {
+                    showContent(targetId);
+                    activateLink(link);
+                }
+                // Close sidebar on mobile after clicking a link
+                if (window.innerWidth < 768) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+
+        // Toggle sidebar on mobile
+        menuButton.addEventListener('click', e => {
+            e.stopPropagation();
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', e => {
+            if (window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+                if (!sidebar.contains(e.target) && e.target !== menuButton) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+
+        // --- API PLACEHOLDER FUNCTIONS (Connect to your actual backend) ---
+
+        // Function to simulate a notification message
+        function showNotification(message, type = 'success') {
+            const box = document.createElement('div');
+            box.className = `p-4 rounded-lg shadow-lg text-white font-semibold transform transition-all duration-300 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            box.textContent = message;
+            document.getElementById('message-box').prepend(box);
+
+            setTimeout(() => {
+                box.classList.add('opacity-0');
+                box.addEventListener('transitionend', () => box.remove());
+            }, 3000);
+        }
+        window.showNotification = showNotification; // Make globally accessible
+
+        // 1. Performance Retrieval
+        window.fetchPerformanceReview = () => {
+            const semester = document.getElementById('semester-select').value;
+            const resultDiv = document.getElementById('performance-result');
+            
+            // Placeholder: Show loading message
+            resultDiv.innerHTML = `<p class="text-indigo-500">Fetching performance review for ${semester}...</p>`;
+
+            // Simulated fetch delay (Replace with actual fetch logic)
+            setTimeout(() => {
+                // After API call, update with results or an empty state
+                resultDiv.innerHTML = `
+                    <p class="font-semibold text-gray-700">Review for: ${semester}</p>
+                    <p class="text-sm text-gray-500">No data found for this semester, or data is pending.</p>
+                `;
+                showNotification(`Request sent: Performance for ${semester} loading.`, 'success');
+            }, 500);
+        };
+
+        // 2. Attendance Records
+        window.fetchMonthlyAttendance = () => {
+            const tbody = document.getElementById('monthly-attendance-body');
+            // Placeholder: Show loading message
+            tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-indigo-500">Fetching current month\'s attendance records...</td></tr>';
+            
+            // Simulated fetch delay (Replace with actual fetch logic)
+            setTimeout(() => {
+                // After API call, update with results or an empty state
+                tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-500">No attendance data to display for the current period.</td></tr>';
+                showNotification("Monthly attendance request complete.", 'success');
+            }, 500);
+        };
+
+        // 3. Attendance Deductions
+        window.fetchAttendanceDeductions = () => {
+            const start = document.getElementById('deduction-start-date').value;
+            const end = document.getElementById('deduction-end-date').value;
+
+            if (!start || !end) {
+                showNotification('Please select a valid date range.', 'error');
+                return;
+            }
+
+            const tbody = document.getElementById('deductions-body');
+            // Placeholder: Show loading message
+            tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-indigo-500">Searching for deductions from ${start} to ${end}...</td></tr>`;
+            
+            // Simulated fetch delay (Replace with actual fetch logic)
+            setTimeout(() => {
+                 // After API call, update with results or an empty state
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">No attendance deductions found for the selected period.</td></tr>`;
+                showNotification("Deductions filter request complete.", 'success');
+            }, 500);
+        };
+
+        // 4. Payroll Details
+        window.fetchLastMonthPayroll = () => {
+            const gross = document.getElementById('payroll-gross');
+            const bonus = document.getElementById('payroll-bonus');
+            const deductions = document.getElementById('payroll-deductions');
+            const net = document.getElementById('payroll-net');
+
+            // Placeholder: Set to loading state
+            gross.textContent = '...';
+            bonus.textContent = '...';
+            deductions.textContent = '...';
+            net.textContent = 'Fetching...';
+
+            // Simulated fetch delay (Replace with actual fetch logic)
+            setTimeout(() => {
+                // After API call, update with results or an empty state
+                gross.textContent = '$0.00';
+                bonus.textContent = '$0.00';
+                deductions.textContent = '$0.00';
+                net.textContent = '$0.00';
+                showNotification("Last month's payroll loaded (zero balance as placeholder).", 'success');
+            }, 500);
+        };
+
+        // 5. Leave Application
+        document.getElementById('leave-application-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const type = document.getElementById('leave-type').value;
+            const start = document.getElementById('leave-start-date').value;
+            const end = document.getElementById('leave-end-date').value;
+            
+            if (new Date(start) > new Date(end)) {
+                 showNotification('Start date cannot be after end date.', 'error');
+                 return;
+            }
+
+            // Simulated API call (Replace with actual fetch logic)
+            setTimeout(() => {
+                showNotification(`Leave request for ${type} (${start} to ${end}) submitted successfully!`, 'success');
+                document.getElementById('leave-application-form').reset();
+            }, 800);
+        });
+
+        // 6. Leave Tracking
+        window.trackMyLeaves = () => {
+            const tbody = document.getElementById('tracked-leaves-body');
+            // Placeholder: Show loading message
+            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-indigo-500">Loading submitted Annual and Accidental leave requests...</td></tr>';
+            
+            // Simulated fetch delay (Replace with actual fetch logic)
+            setTimeout(() => {
+                 // After API call, update with results or an empty state
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No annual or accidental leave requests found for the current month.</td></tr>`;
+                showNotification("Leave tracking request complete.", 'success');
+            }, 500);
+        };
+
+        // 7. Admin: Leave Approval Queue (Manager Role)
+        window.fetchManagerLeaves = () => {
+            const tbody = document.getElementById('manager-leaves-body');
+            // Placeholder: Show loading message
+            tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-yellow-500">Loading pending Unpaid & Annual leave requests...</td></tr>';
+            
+            // Simulated fetch delay (Replace with actual fetch logic)
+            setTimeout(() => {
+                // After API call, update with results or an empty state
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">No pending Unpaid or Annual leave requests requiring your approval.</td></tr>`;
+                showNotification("Pending leaves loaded.", 'success');
+            }, 500);
+        };
+
+        window.approveLeave = (id) => { showNotification(`Leave Request ${id} Approved! (API Call Pending)`, 'success'); /* Add real API call */ };
+        window.rejectLeave = (id) => { showNotification(`Leave Request ${id} Rejected! (API Call Pending)`, 'error'); /* Add real API call */ };
+
+        // 8. Admin: Employee Evaluation (Manager Role)
+        document.getElementById('evaluation-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const empId = document.getElementById('eval-emp-id').value;
+
+            // Simulated API call (Replace with actual fetch logic)
+            setTimeout(() => {
+                showNotification(`Evaluation for Employee ${empId} submitted successfully! (API Call Pending)`, 'success');
+                document.getElementById('evaluation-form').reset();
+            }, 800);
+        });
+    });
+</script>
+
+</body>
+</html>

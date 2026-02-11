@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .card { @apply bg-white rounded-xl shadow-lg border border-gray-100; }
+        .btn-primary { @apply px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200 font-medium; }
+        .btn-danger { @apply px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 font-medium; }
+        .btn-success { @apply px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200 font-medium; }
+        .input-field { @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition; }
+    </style>
+</head>
+<body class="p-6">
+
+    <!-- Header -->
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">HR Dashboard</h1>
+            <p class="text-gray-500 mt-1">Manage leaves, deductions, and payroll.</p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-right">
+                <p class="text-sm font-semibold text-gray-700">Sarah Jenkins</p>
+                <p class="text-xs text-gray-500">Head of HR</p>
+            </div>
+            <div class="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
+                SJ
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- LEFT COLUMN (Leave Management - Takes up 2/3 width) -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- SECTION 1: Leave Requests Approval -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-calendar-check text-indigo-600 mr-2"></i>Pending Leave Requests</h2>
+                    <!-- Note: The count will now be 0 because leaveRequests is empty -->
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded" id="pending-count">0 Pending</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-4">Approve or reject leaves based on employee balance and policy.</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Current Balance</th>
+                                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leave-requests-body" class="bg-white divide-y divide-gray-200">
+                            <!-- JS will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Payroll Generation -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-file-invoice-dollar text-green-600 mr-2"></i>Monthly Payroll</h2>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 items-end bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
+                    <div class="w-full sm:w-1/3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Select Month</label>
+                        <select id="payroll-month" class="input-field">
+                            <option value="December 2025">December 2025</option>
+                            <option value="November 2025">November 2025</option>
+                        </select>
+                    </div>
+                    <button onclick="generatePayroll()" class="btn-primary w-full sm:w-auto">
+                        <i class="fas fa-cogs mr-2"></i>Generate Payroll Report
+                    </button>
+                </div>
+
+                <div id="payroll-result" class="hidden">
+                    <h3 class="text-lg font-semibold mb-3">Payroll Preview: <span id="payroll-month-display"></span></h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 border">
+                            <thead class="bg-gray-800 text-white">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase">ID</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase">Name</th>
+                                    <th class="px-4 py-2 text-right text-xs font-medium uppercase">Base Salary</th>
+                                    <th class="px-4 py-2 text-right text-xs font-medium uppercase">Deductions</th>
+                                    <th class="px-4 py-2 text-right text-xs font-medium uppercase">Net Salary</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payroll-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Payroll rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Download CSV <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN (Deductions - Takes up 1/3 width) -->
+        <div class="space-y-6">
+            
+            <!-- SECTION 2: Deductions Management -->
+            <div class="card p-6 bg-red-50 border-red-100">
+                <h2 class="text-xl font-bold text-red-800 mb-2"><i class="fas fa-user-minus mr-2"></i>Apply Deductions</h2>
+                <p class="text-sm text-red-600 mb-6">Log missing hours or days to calculate payroll deductions.</p>
+
+                <!-- 5. Missing Hours -->
+                <div class="mb-6 pb-6 border-b border-red-200">
+                    <h4 class="font-semibold text-gray-800 mb-3">Missing Hours</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-medium text-gray-600">Employee ID</label>
+                            <input type="number" id="deduct-hour-id" placeholder="e.g. 101" class="input-field bg-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-gray-600">Hours Missed</label>
+                            <input type="number" id="deduct-hour-val" placeholder="0" class="input-field bg-white">
+                        </div>
+                        <button onclick="applyDeduction('hours')" class="w-full py-2 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 font-medium text-sm transition">
+                            Apply Hour Deduction
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 7. Unpaid Leave Deduction (Added Back) -->
+                <div class="mb-6 pb-6 border-b border-red-200">
+                    <h4 class="font-semibold text-gray-800 mb-3">Unpaid Leave</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-medium text-gray-600">Employee ID</label>
+                            <input type="number" id="deduct-unpaid-id" placeholder="e.g. 101" class="input-field bg-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-gray-600">Days Taken</label>
+                            <input type="number" id="deduct-unpaid-val" placeholder="0" class="input-field bg-white">
+                        </div>
+                        <button onclick="applyDeduction('unpaid')" class="w-full py-2 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 font-medium text-sm transition">
+                            Apply Unpaid Deduction
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. Missing Days -->
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-3">Missing Days (Unexcused)</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-medium text-gray-600">Employee ID</label>
+                            <input type="number" id="deduct-day-id" placeholder="e.g. 101" class="input-field bg-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-gray-600">Days Missed</label>
+                            <input type="number" id="deduct-day-val" placeholder="0" class="input-field bg-white">
+                        </div>
+                        <button onclick="applyDeduction('days')" class="w-full py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm transition">
+                            Apply Day Deduction
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Feedback Msg -->
+                <div id="deduction-msg" class="hidden mt-4 p-2 text-center text-sm rounded bg-green-100 text-green-700"></div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card p-6">
+                <h3 class="font-bold text-gray-800 mb-4">Leave Policy Summary</h3>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex justify-between">
+                        <span>Annual Balance:</span>
+                        <span class="font-bold">21 Days</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span>Accidental Balance:</span>
+                        <span class="font-bold">7 Days</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span>Unpaid Limit:</span>
+                        <span class="font-bold">Unlimited</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. MOCK DATA ---
+        
+        // Employee Database (Simplified) - CLEARED
+        const employees = [];
+
+        // Leave Requests - CLEARED
+        let leaveRequests = [];
+
+        // --- 2. LEAVE MANAGEMENT LOGIC ---
+
+        function renderLeaveRequests() {
+            const tbody = document.getElementById('leave-requests-body');
+            const pendingCountEl = document.getElementById('pending-count');
+            tbody.innerHTML = '';
+
+            pendingCountEl.textContent = `${leaveRequests.length} Pending`;
+
+
+            if (leaveRequests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">No pending requests.</td></tr>';
+                return;
+            }
+
+            leaveRequests.forEach(req => {
+                // Style badge based on type
+                let typeBadge = '';
+                if(req.type === 'Annual') typeBadge = 'bg-blue-100 text-blue-800';
+                else if(req.type === 'Accidental') typeBadge = 'bg-orange-100 text-orange-800';
+                else if(req.type === 'Unpaid') typeBadge = 'bg-red-100 text-red-800';
+                else typeBadge = 'bg-purple-100 text-purple-800'; // Compensation
+
+                // Balance Logic: Highlight if balance is insufficient
+                let balanceDisplay = `<span class="font-mono font-bold">${req.balance}</span>`;
+                let warning = "";
+                
+                // Logic for Requirement 2: Check balance
+                if (req.type === 'Annual' || req.type === 'Accidental') {
+                    if (req.balance < req.days) {
+                        balanceDisplay = `<span class="text-red-600 font-bold">${req.balance} (Low)</span>`;
+                        warning = `<div class="text-xs text-red-500">Insufficient Balance</div>`;
+                    }
+                }
+
+                const row = `
+                    <tr>
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${req.name}</div>
+                            <div class="text-xs text-gray-500">ID: ${req.empId}</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${typeBadge}">
+                                ${req.type}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${req.dates} (${req.days} days)</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-600">
+                            ${balanceDisplay}
+                            ${warning}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onclick="handleLeaveAction(${req.id}, 'approve')" class="text-green-600 hover:text-green-900 mr-3" title="Approve"><i class="fas fa-check-circle fa-lg"></i></button>
+                            <button onclick="handleLeaveAction(${req.id}, 'reject')" class="text-red-600 hover:text-red-900" title="Reject"><i class="fas fa-times-circle fa-lg"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function handleLeaveAction(reqId, action) {
+            // Remove request from array
+            leaveRequests = leaveRequests.filter(r => r.id !== reqId);
+            renderLeaveRequests();
+            
+            // Show feedback (Simulated)
+            const msg = action === 'approve' ? 'Request Approved' : 'Request Rejected';
+            // Using alert() for simple notification as this is a dashboard context
+            alert(`${msg}. Notification sent to employee.`);
+        }
+
+        // --- 3. DEDUCTION LOGIC (Req 5, 6, 7) ---
+
+        function applyDeduction(type) {
+            let id, val, successMsg;
+            const feedbackEl = document.getElementById('deduction-msg');
+
+            if (type === 'hours') {
+                id = document.getElementById('deduct-hour-id').value;
+                val = document.getElementById('deduct-hour-val').value;
+                successMsg = `Deduction for ${val} missing hours applied to ID ${id}.`;
+            } else if (type === 'unpaid') {
+                // New logic for Unpaid Leave
+                id = document.getElementById('deduct-unpaid-id').value;
+                val = document.getElementById('deduct-unpaid-val').value;
+                successMsg = `Deduction for ${val} days of Unpaid Leave applied to ID ${id}.`;
+            } else {
+                id = document.getElementById('deduct-day-id').value;
+                val = document.getElementById('deduct-day-val').value;
+                successMsg = `Deduction for ${val} missing days applied to ID ${id}.`;
+            }
+
+            if (!id || !val) {
+                // Using alert() for simple notification as this is a dashboard context
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // Check if employee exists
+            const emp = employees.find(e => e.id == id);
+            if (!emp) {
+                 // Using alert() for simple notification as this is a dashboard context
+                alert(`Error: Employee with ID ${id} not found in the database.`);
+                return;
+            }
+
+            // Simulate DB Update
+            console.log(`Applying ${type} deduction: ID ${id}, Amount ${val}`);
+
+            feedbackEl.textContent = successMsg;
+            feedbackEl.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+            feedbackEl.classList.add('bg-green-100', 'text-green-700');
+            setTimeout(() => feedbackEl.classList.add('hidden'), 3000);
+
+            // Clear inputs
+            document.getElementById('deduct-hour-id').value = '';
+            document.getElementById('deduct-hour-val').value = '';
+            document.getElementById('deduct-day-id').value = '';
+            document.getElementById('deduct-day-val').value = '';
+            document.getElementById('deduct-unpaid-id').value = '';
+            document.getElementById('deduct-unpaid-val').value = '';
+        }
+
+        // --- 4. PAYROLL LOGIC (Req 8) ---
+
+        function generatePayroll() {
+            const month = document.getElementById('payroll-month').value;
+            document.getElementById('payroll-month-display').innerText = month;
+            
+            const tbody = document.getElementById('payroll-body');
+            tbody.innerHTML = '';
+
+            if (employees.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">No employee data available for payroll.</td></tr>';
+                document.getElementById('payroll-result').classList.remove('hidden');
+                return;
+            }
+
+
+            // Simulate calculation logic
+            // Assuming standard month = 30 days. Daily Rate = Salary / 30.
+            // Randomly assigning some deductions for demo purposes.
+            
+            employees.forEach(emp => {
+                const dailyRate = emp.salary / 30;
+                
+                // Simulating random deductions for demonstration (Missing hours/days)
+                const randomDeductionDays = Math.floor(Math.random() * 2); 
+                const deductionAmount = Math.round(randomDeductionDays * dailyRate);
+                
+                const netSalary = emp.salary - deductionAmount;
+
+                const row = `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${emp.id}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-700">${emp.name}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">${emp.salary.toLocaleString()}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-red-600 font-medium">-${deductionAmount.toLocaleString()}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-right font-bold text-green-700">${netSalary.toLocaleString()} EGP</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('payroll-result').classList.remove('hidden');
+        }
+
+        // Initial Render
+        renderLeaveRequests();
+
+    </script>
+</body>
+</html>
